@@ -1,14 +1,40 @@
-from os import walk
+from os import listdir
+from os.path import isfile, join
 import time
 import os
 import random
-from PIL import Image
+import tkinter
+from PIL import Image, ImageTk
 
-DOWNLOAD_DIRECTORY = os.path.join(os.path.dirname(__file__), 'images')
+class PhotoViewer():
+	def __init__(self):
+		self.DOWNLOAD_DIRECTORY = os.path.join(os.path.dirname(__file__), 'images')
+		self.root = tkinter.Tk()
+		self.w, self.h = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
+		self.root.overrideredirect(1)
+		self.root.geometry("%dx%d+0+0" % (self.w, self.h))
+		self.root.focus_set()
+		self.canvas = tkinter.Canvas(self.root,width=self.w,height=self.h)
+		self.canvas.pack()
+		self.canvas.configure(background='black')
 
-while(True):
-	f = []
-	for (dirpath, dirnames, filenames) in walk(DOWNLOAD_DIRECTORY):
-		image = Image.open(os.path.join(DOWNLOAD_DIRECTORY, random.choice(filenames)))
-		image.show()
-		time.sleep(3)
+	def showPIL(self):	
+		filenames = [f for f in listdir(self.DOWNLOAD_DIRECTORY) if isfile(join(self.DOWNLOAD_DIRECTORY, f))]
+		fullpath = os.path.join(self.DOWNLOAD_DIRECTORY, random.choice(filenames))
+		print(fullpath)
+		pilImage = Image.open(fullpath)
+		imgWidth, imgHeight = pilImage.size
+		ratio = min(self.w/imgWidth, self.h/imgHeight)
+		imgWidth = int(imgWidth*ratio)
+		imgHeight = int(imgHeight*ratio)
+		pilImage = pilImage.resize((imgWidth,imgHeight), Image.ANTIALIAS)   
+		self.image = ImageTk.PhotoImage(pilImage)
+		imagesprite = self.canvas.create_image(self.w/2,self.h/2,image=self.image)
+		self.root.update_idletasks()
+		self.root.update()
+		self.root.after(2000, self.showPIL)
+
+if __name__== "__main__":
+    app = PhotoViewer()
+    app.showPIL()
+    app.root.mainloop()
