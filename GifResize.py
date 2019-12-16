@@ -1,27 +1,5 @@
 from PIL import Image
 
-def resize_gif(path, save_as=None, resize_to=None):
-    """
-    Resizes the GIF to a given length:
-
-    Args:
-        path: the path to the GIF file
-        save_as (optional): Path of the resized gif. If not set, the original gif will be overwritten.
-        resize_to (optional): new size of the gif. Format: (int, int). If not set, the original GIF will be resized to
-                              half of its size.
-    """
-    all_frames = extract_and_resize_frames(path, resize_to)
-
-    if not save_as:
-        save_as = path
-
-    if len(all_frames) == 1:
-        print("Warning: only 1 frame found")
-        all_frames[0].save(save_as, optimize=True)
-    else:
-        all_frames[0].save(save_as, optimize=True, save_all=True, append_images=all_frames[1:], loop=1000)
-
-
 def analyseImage(path):
     """
     Pre-process pass over the image to determine the mode (full or additive).
@@ -49,14 +27,6 @@ def analyseImage(path):
 
 
 def FullscreenGifFrames(path, resize_to=None):
-    """
-    Iterate the GIF, extracting each frame and resizing them
-
-    Returns:
-        An array of all frames
-    """
-    mode = analyseImage(path)['mode']
-
     im = Image.open(path)
 
     if not resize_to:
@@ -85,12 +55,12 @@ def FullscreenGifFrames(path, resize_to=None):
             Is this file a "partial"-mode GIF where frames update a region of a different size to the entire image?
             If so, we need to construct the new frame by pasting it on top of the preceding frames.
             '''
-            if mode == 'partial':
-                new_frame.paste(last_frame)
+            #if mode == 'partial':
+            new_frame.paste(last_frame)
 
             new_frame.paste(im, (0, 0), im.convert('RGBA'))
 
-            new_frame.thumbnail(resize_to, Image.ANTIALIAS)
+            #new_frame = new_frame.resize(resize_to, Image.ANTIALIAS)
             all_frames.append(new_frame)
 
             i += 1
@@ -98,5 +68,7 @@ def FullscreenGifFrames(path, resize_to=None):
             im.seek(im.tell() + 1)
     except EOFError:
         pass
+
+        all_frames = list(map(lambda x: x.resize(resize_to, Image.ANTIALIAS), all_frames))
 
     return all_frames
