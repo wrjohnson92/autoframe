@@ -67,7 +67,7 @@ class PhotoViewer():
 			self.lbl = ImageLabel(self.root)
 			self.lbl.pack()
 			self.lbl.load(fullpath, self.w, self.h)
-			self.root.after(5000, self.showPIL)
+			self.root.after(180000, self.showPIL)
 
 
 if __name__== "__main__":
