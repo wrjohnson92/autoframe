@@ -29,7 +29,7 @@ class ImageLabel(tk.Label):
 		try:
 			self.delay = im.info['duration']
 		except:
-			self.delay = 100
+			self.delay = 60
 
 		if len(self.frames) == 1:
 			self.config(image=self.frames[0], background="black", width=self.imgWidth, height=self.imgHeight)
