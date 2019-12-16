@@ -166,10 +166,10 @@
         },
         "twilio": {
             "hashes": [
-                "sha256:da282a9c02bd9dfb190b798528b478833d8d28cb51464e8c45da0f0794384cde"
+                "sha256:affbd1337133c5fbe6a59250a89a832b509fe1d8cba2c3dad50ef5f221bb4e6b"
             ],
             "index": "pypi",
-            "version": "==6.34.0"
+            "version": "==6.35.0"
         },
         "urllib3": {
             "hashes": [
