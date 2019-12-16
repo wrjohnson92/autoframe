@@ -19,13 +19,12 @@ class ImageLabel(tk.Label):
 			self.imgWidth = int(imgWidth*ratio)
 			self.imgHeight = int(imgHeight*ratio)
 		self.loc = 0
+		resize_to = (self.imgWidth, self.imgHeight)
 
 		if im.format == "GIF":
-			print("makin frames")
-			self.frames = list(map(lambda x: ImageTk.PhotoImage(x), FullscreenGifFrames(im.filename, (self.imgWidth, self.imgHeight))))
-			print("frames is done")
+			self.frames = list(map(lambda x: ImageTk.PhotoImage(x), FullscreenGifFrames(im.filename, resize_to)))
 		else:
-			self.frames = [ImageTk.PhotoImage(im.copy())]
+			self.frames = [ImageTk.PhotoImage(im.resize(resize_to, Image.ANTIALIAS))]
 
 		try:
 			self.delay = im.info['duration']
@@ -54,21 +53,22 @@ class PhotoViewer():
 		self.DOWNLOAD_DIRECTORY = os.path.join(os.path.dirname(__file__), 'images')
 		self.root = tk.Tk()
 		self.root.attributes("-fullscreen", True)
-		self.root.configure(background='black')
+		self.root.configure(background='black', cursor="none")
+		self.root.bind("<Escape>", lambda event: self.root.destroy())
 		self.w, self.h = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
 		self.root.focus_set()
 
 	def showPIL(self):
 			if hasattr(self, 'lbl'):
 				self.lbl.unload()
-
 			filenames = [f for f in listdir(self.DOWNLOAD_DIRECTORY) if isfile(join(self.DOWNLOAD_DIRECTORY, f))]
 			fullpath = os.path.join(self.DOWNLOAD_DIRECTORY, random.choice(filenames))
 			print(fullpath)
 			self.lbl = ImageLabel(self.root)
 			self.lbl.pack()
 			self.lbl.load(fullpath, self.w, self.h)
-			self.root.after(2000, self.showPIL)
+			self.root.after(5000, self.showPIL)
+
 
 if __name__== "__main__":
     app = PhotoViewer()
